@@ -136,7 +136,7 @@ class Env(object):
         self.input_pnt = self.input_data
         self.mask = tf.zeros([self.batch_size*beam_width,self.n_nodes],dtype=tf.float32)
 
-        state = State(mask = self.mask )
+        state = State(mask=self.mask)
 
         return state
 
@@ -166,12 +166,12 @@ class Env(object):
 
 
 def reward_func(sample_solution=None):
-    """The reward for the TSP task is defined as the 
+    """The reward for the TSP task is defined as the
     negative value of the route length. This function gets the decoded
     actions and computed the reward.
 
     Args:
-        sample_solution : a list of tensors with len decode_len 
+        sample_solution : a list of tensors with len decode_len
             each having a shape [batch_size x input_dim]
 
     Returns:
@@ -191,13 +191,20 @@ def reward_func(sample_solution=None):
     """
 
     # make sample_solution of shape [sourceL x batch_size x input_dim]
-    sample_solution = tf.stack(sample_solution,0)
+    sample_solution = tf.stack(sample_solution, 0)
 
-    sample_solution_tilted = tf.concat((tf.expand_dims(sample_solution[-1],0),
-         sample_solution[:-1]),0)
+    sample_solution_tilted = \
+        tf.concat(
+            (tf.expand_dims(sample_solution[-1], 0), sample_solution[:-1]),
+            0)
     # get the reward based on the route lengths
-
-
-    route_lens_decoded = tf.reduce_sum(tf.pow(tf.reduce_sum(tf.pow(\
-        (sample_solution_tilted - sample_solution) ,2), 2) , .5), 0)
-    return route_lens_decoded 
+    # compute euclidean distance (I think)
+    route_lens_decoded = \
+        tf.reduce_sum(
+            tf.pow(
+                tf.reduce_sum(
+                    tf.pow((sample_solution_tilted - sample_solution), 2),
+                    2),
+                .5),
+            0)
+    return route_lens_decoded

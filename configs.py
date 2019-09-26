@@ -42,7 +42,7 @@ def ParseParams():
     parser.add_argument('--n_process_blocks', default=3,type=int,                     
                         help='Number of process block iters to run in the Critic network')
     parser.add_argument('--rnn_layers', default=1, type=int, help='Number of LSTM layers in the encoder and decoder')
-    parser.add_argument('--decode_len', default=None,type=int,                     
+    parser.add_argument('--decode_len', default=None, type=int,                     
                         help='Number of time steps the decoder runs before stopping')
     parser.add_argument('--n_glimpses', default=0, type=int, help='Number of glimpses to use in the attention')
     parser.add_argument('--tanh_exploration', default=10.,  type=float,                   
@@ -77,7 +77,7 @@ def ParseParams():
     parser.add_argument('--model_dir', type=str, default='')
     parser.add_argument('--load_path', type=str, default='', help='Path to load trained variables')
     parser.add_argument('--disable_tqdm', default=True, type=str2bool)
-                        
+
     args, unknown = parser.parse_known_args()
     args = vars(args)
 

@@ -7,11 +7,10 @@ import os
 import sys
 import time
 from datetime import datetime
-import numpy as np
 
 import tensorflow as tf
 import numpy as np
-import scipy.misc 
+import scipy.misc
 try:
         from StringIO import StringIO  # Python 2.7
 except ImportError:
@@ -21,10 +20,10 @@ print_grad = True
 
 
 class printOut(object):
-    def __init__(self,f=None ,stdout_print=True):
+    def __init__(self, f=None, stdout_print=True):
         ''' 
-        This class is used for controlling the printing. It will write in a 
-        file f and screen simultanously.
+        This class is used for controlling the printing. It will write in a
+        file f and screen simultaneously.
         '''
         self.out_file = f
         self.stdout_print = stdout_print
@@ -47,14 +46,14 @@ class printOut(object):
                 sys.stdout.write("\n")
             sys.stdout.flush()
 
-    def print_time(self,s, start_time):
+    def print_time(self, s, start_time):
         """Take a start time, print elapsed duration, and return a new time."""
         self.print_out("%s, time %ds, %s." % (s, (time.time() - start_time) +"  " +str(time.ctime()) ))
         return time.time()
 
 
 def get_time():
-    '''returns formatted current time'''
+    ''' returns formatted current time '''
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
  
 
@@ -67,11 +66,13 @@ def get_config_proto(log_device_placement=False, allow_soft_placement=True):
         config_proto.gpu_options.allow_growth = True
         return config_proto
 
+
 def debug_tensor(s, msg=None, summarize=10):
         """Print the shape and value of a tensor at test time. Return a new tensor."""
         if not msg:
                 msg = s.name
         return tf.Print(s, [tf.shape(s), s], msg + " ", summarize=summarize)
+
 
 def has_nan(datum, tensor):
         if hasattr(tensor, 'dtype'):
@@ -84,6 +85,7 @@ def has_nan(datum, tensor):
         else:
                 return False
 
+# loss function cross entropy
 def openAI_entropy(logits):
         # Entropy proposed by OpenAI in their A2C baseline
         a0 = logits - tf.reduce_max(logits, 2, keepdims=True)
@@ -97,11 +99,12 @@ def softmax_entropy(p0):
         # Normal information theory entropy by Shannon
         return - tf.reduce_sum(p0 * tf.log(p0 + 1e-6), axis=1)
 
+# to compute the distance matrix from each node to each node
 def Dist_mat(A):
         # A is of shape [batch_size x nnodes x 2].
         # return: a distance matrix with shape [batch_size x nnodes x nnodes]
         nnodes = tf.shape(A)[1]
-        A1 = tf.tile(tf.expand_dims(A,1),[1,nnodes,1,1])
-        A2 = tf.tile(tf.expand_dims(A,2),[1,1,nnodes,1])
-        dist = tf.norm(A1-A2,axis=3)
+        A1 = tf.tile(tf.expand_dims(A, 1), [1, nnodes, 1, 1])
+        A2 = tf.tile(tf.expand_dims(A, 2), [1, 1, nnodes, 1])
+        dist = tf.norm(A1-A2, axis=3)
         return dist

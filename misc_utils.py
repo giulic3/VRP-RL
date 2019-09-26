@@ -8,10 +8,11 @@ import sys
 import time
 from datetime import datetime
 import numpy as np
+import misc_utils
 
 import tensorflow as tf
 import numpy as np
-import scipy.misc 
+import scipy.misc
 try:
     from StringIO import StringIO  # Python 2.7
 except ImportError:
@@ -83,12 +84,12 @@ def extract(xVar):
 
 def extract_norm(xVar):
   global yGrad
-  yGradNorm = xVar.norm() 
+  yGradNorm = xVar.norm()
   print(yGradNorm)
 
-# tensorboard logger
+###### TENSORBOARD LOGGER  #######
 class Logger(object):
-    
+
     def __init__(self, log_dir):
         """Create a summary writer logging to log_dir."""
         self.writer = tf.summary.FileWriter(log_dir)
@@ -120,7 +121,7 @@ class Logger(object):
         # Create and write Summary
         summary = tf.Summary(value=img_summaries)
         self.writer.add_summary(summary, step)
-        
+
     def histo_summary(self, tag, values, step, bins=1000):
         """Log a histogram of the tensor of values."""
 
@@ -252,6 +253,7 @@ def create_rnn_cell(unit_type, num_units, num_layers, num_residual_layers,
     else:  # Multi layers
         return tf.contrib.rnn.MultiRNNCell(cell_list)
 
+
 def gradient_clip(gradients, params, max_gradient_norm):
     """Clipping gradients of a model."""
     clipped_gradients, gradient_norm = tf.clip_by_global_norm(
@@ -262,29 +264,32 @@ def gradient_clip(gradients, params, max_gradient_norm):
 
     return clipped_gradients, gradient_norm_summary
 
+
 def create_or_load_model(model, model_dir, session, out_dir, name):
     """Create translation model and initialize or load parameters in session."""
     start_time = time.time()
     latest_ckpt = tf.train.latest_checkpoint(model_dir)
     if latest_ckpt:
         model.saver.restore(session, latest_ckpt)
-        utils.print_out(
+        misc_utils.print_out(
                 "  loaded %s model parameters from %s, time %.2fs" %
                 (name, latest_ckpt, time.time() - start_time))
     else:
-        utils.print_out("  created %s model with fresh parameters, time %.2fs." %
+        misc_utils.print_out("  created %s model with fresh parameters, time %.2fs." %
                                         (name, time.time() - start_time))
         session.run(tf.global_variables_initializer())
 
     global_step = model.global_step.eval(session=session)
     return model, global_step
-    
+
+
 def get_device_str(device_id, num_gpus):
     """Return a device string for multi-GPU setup."""
     if num_gpus == 0:
         return "/cpu:0"
     device_str_output = "/gpu:%d" % (device_id % num_gpus)
     return device_str_output
+
 
 def add_summary(summary_writer, global_step, tag, value):
     """Add a new summary to the current summary_writer.
@@ -303,9 +308,11 @@ def get_config_proto(log_device_placement=False, allow_soft_placement=True):
     config_proto.gpu_options.allow_growth = True
     return config_proto
 
+
 def check_tensorflow_version():
     if tf.__version__ < "1.2.1":
         raise EnvironmentError("Tensorflow version must >= 1.2.1")
+
 
 def debug_tensor(s, msg=None, summarize=10):
     """Print the shape and value of a tensor at test time. Return a new tensor."""
@@ -313,9 +320,10 @@ def debug_tensor(s, msg=None, summarize=10):
         msg = s.name
     return tf.Print(s, [tf.shape(s), s], msg + " ", summarize=summarize)
 
+
 def tf_print(tensor, transform=None):
 
-    # Insert a custom python operation into the graph that does nothing but print a tensors value 
+    # Insert a custom python operation into the graph that does nothing but print a tensor's value
     def print_tensor(x):
         # x is typically a numpy array here so you could do anything you want with it,
         # but adding a transformation of some kind usually makes the output more digestible

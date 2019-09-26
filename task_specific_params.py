@@ -1,5 +1,5 @@
 from collections import namedtuple
-
+# these file simply contains the default configurations for the 2 tasks
 # task specific params
 TaskTSP = namedtuple('TaskTSP', ['task_name', 
 						'input_dim', 
@@ -44,7 +44,6 @@ tsp100 = TaskTSP(task_name = 'tsp',
 			  decode_len=100)
 task_lst['tsp100'] = tsp100
 
-
 # VRP10
 vrp10 = TaskVRP(task_name = 'vrp',
 			  input_dim=3,
@@ -56,7 +55,7 @@ vrp10 = TaskVRP(task_name = 'vrp',
 task_lst['vrp10'] = vrp10
 
 # VRP20
-vrp20 = TaskVRP(task_name = 'vrp',
+vrp20 = TaskVRP(task_name='vrp',
 			  input_dim=3,
 			  n_nodes=21,
 			  n_cust = 20,
@@ -66,7 +65,7 @@ vrp20 = TaskVRP(task_name = 'vrp',
 task_lst['vrp20'] = vrp20
 
 # VRP50
-vrp50 = TaskVRP(task_name = 'vrp',
+vrp50 = TaskVRP(task_name='vrp',
 			  input_dim=3,
 			  n_nodes=51,
 			  n_cust = 50,
@@ -76,7 +75,7 @@ vrp50 = TaskVRP(task_name = 'vrp',
 task_lst['vrp50'] = vrp50
 
 # VRP100
-vrp100 = TaskVRP(task_name = 'vrp',
+vrp100 = TaskVRP(task_name='vrp',
 			  input_dim=3,
 			  n_nodes=101,
 			  n_cust = 100,
